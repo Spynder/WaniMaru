@@ -1,0 +1,222 @@
+* {
+	padding: 0;
+	margin: 0;
+}
+
+body {
+	overflow: hidden;
+	background: url("https://assets.wanikani.com/assets/default-v2/bg-texture-f915951af4e4baa78c241cff9ae477176056f54f669ff024c261eb1b08eb31e5.png");
+}
+
+canvas {
+	display: block;
+	position: absolute;
+	bottom: 0; left: 0; right: 0;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+#info {
+	display: none;
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 200px;
+	min-height: 20px;
+	overflow-y: auto;
+	padding: 2px;
+	color: white;
+	background: #333;
+	border-radius: 5px;
+	text-align: center;
+
+	
+	.header {
+		font-family: "Ubuntu", Helvetica, Arial, sans-serif;
+    	line-height: 1.2em;
+		background: #555;
+		.srs, .timer {
+			text-align: center;
+		}
+		.highlight {
+			color: #FFA;
+		}
+	}
+}
+
+.item {
+	display: block;
+	width: 100%;
+	height: 25px;
+	line-height: 25px;
+	padding: 2px 0;
+	border-bottom: 1px solid black;
+	&:last-child {border: none}
+	
+	&.radical {background: #008ad1}
+	&.kanji {background: #eb009c}
+	&.vocabulary {background: #a300f5}
+	
+	&:hover {
+		&.radical {background: #009ae7}
+		&.kanji {background: #fd00a9}
+		&.vocabulary {background: #ad0aff}
+	}
+
+	color: white;
+	text-decoration: none;
+
+	img {
+		width: 25px;
+		height: 25px;
+		filter: invert(1);
+	}
+}
+
+header {
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+	align-items: center;
+	padding: 10px;
+	font-size: 20px;
+	height: 50px;
+	background: #fafafa;
+	background-image: linear-gradient(to bottom, rgba(255,255,255,0.9), rgba(242,242,242,0.9));
+	box-sizing: border-box;
+	border-bottom: 1px solid #d5d5d5;
+	box-shadow: 0 1px 10px rgba(0, 0, 0, 0.05);
+
+	font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+	color: #333;
+
+	#logo {
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		img {
+			width: 32px;
+			height: 32px;
+			animation-name: spin;
+			animation-duration: 30000ms;
+			animation-iteration-count: infinite;
+			animation-timing-function: linear;
+		}
+	}
+
+	.name {
+		color: #050;
+		font-weight: bold;
+	}
+
+	a {text-decoration: none; color: #333;}
+
+	* {
+		margin: 0 5px;
+	}
+}
+
+@keyframes spin {
+	from {transform:rotate(360deg)}
+	to {transform:rotate(0deg)}
+}
+
+.btn {
+	padding: 4px 8px;
+	font-family: "Ubuntu", Helvetica, Arial, sans-serif;
+	font-weight: bold;
+	border-radius: 10px;
+	border: 1px solid #7a0052;
+	background: #ffe2f5;
+	color: #fd00a9 !important;
+	text-decoration: none;
+	&:hover {background: #ffeff9;}
+	&:focus {background: #f3e4ed;}
+}
+
+// Modal
+
+#apiModal {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	position: fixed;
+	z-index: 1;
+	left: 0; top: 0;
+	width: 100%; height: 100%;
+	overflow: auto;
+	background-color: rgba(0,0,0,0.4);
+}
+
+.modal-content {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	padding: 5px 10px;
+	border: 1px solid #888;
+	border-radius: 10px;
+	width: 500px;
+	height: 300px;
+	font-family: "Ubuntu", Helvetica, Arial, sans-serif;
+	text-align: center;
+	background-color: #fff;
+
+	.title {
+		font-size: 32px;
+		font-weight: bold;
+	}
+
+	a {color: blue}
+	p {padding: 10px 50px}
+	input {
+		text-align: center;
+		font-size: 20px;
+		width: 80%;
+		margin: 20px 0;
+		padding: 4px;
+		border-radius: 8px;
+	}
+
+	#sendKey {
+		font-size: 28px;
+	}
+}
+
+#close {
+	align-self: flex-end;
+	position: relative;
+	top: 0; right: 0;
+	color: #aaa;
+	float: right;
+	font-size: 30px;
+	font-weight: bold;
+
+	&:hover, &:focus {
+		color: black;
+		text-decoration: none;
+		cursor: pointer;
+	}
+}
+
+#err {
+	display: none;
+	margin-top: 8px;
+	font-family: "Ubuntu", Helvetica, Arial, sans-serif;
+	text-align: center;
+	font-size: 24px;
+	color: #B00;
+}
+
+.subtitle {
+	position: absolute;
+	bottom: 0; left: 0; right: 0;
+	z-index: 2;
+	margin-left: auto;
+	margin-right: auto;
+	width: 100%;
+	text-align: center;
+	font-family: "Ubuntu", Helvetica, Arial, sans-serif;
+	font-size: 12px;
+	color: gray;
+	a {color: gray}
+}

@@ -1,0 +1,318 @@
+* {
+  padding: 0;
+  margin: 0;
+}
+
+body {
+  overflow: hidden;
+  background: url("https://assets.wanikani.com/assets/default-v2/bg-texture-f915951af4e4baa78c241cff9ae477176056f54f669ff024c261eb1b08eb31e5.png");
+}
+
+canvas {
+  display: block;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+#info {
+  display: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 200px;
+  min-height: 20px;
+  overflow-y: auto;
+  padding: 2px;
+  color: white;
+  background: #333;
+  border-radius: 5px;
+  text-align: center;
+}
+
+#info .header {
+  font-family: "Ubuntu", Helvetica, Arial, sans-serif;
+  line-height: 1.2em;
+  background: #555;
+}
+
+#info .header .srs, #info .header .timer {
+  text-align: center;
+}
+
+#info .header .highlight {
+  color: #FFA;
+}
+
+.item {
+  display: block;
+  width: 100%;
+  height: 25px;
+  line-height: 25px;
+  padding: 2px 0;
+  border-bottom: 1px solid black;
+  color: white;
+  text-decoration: none;
+}
+
+.item:last-child {
+  border: none;
+}
+
+.item.radical {
+  background: #008ad1;
+}
+
+.item.kanji {
+  background: #eb009c;
+}
+
+.item.vocabulary {
+  background: #a300f5;
+}
+
+.item:hover.radical {
+  background: #009ae7;
+}
+
+.item:hover.kanji {
+  background: #fd00a9;
+}
+
+.item:hover.vocabulary {
+  background: #ad0aff;
+}
+
+.item img {
+  width: 25px;
+  height: 25px;
+  -webkit-filter: invert(1);
+          filter: invert(1);
+}
+
+header {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  padding: 10px;
+  font-size: 20px;
+  height: 50px;
+  background: #fafafa;
+  background-image: -webkit-gradient(linear, left top, left bottom, from(rgba(255, 255, 255, 0.9)), to(rgba(242, 242, 242, 0.9)));
+  background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0.9), rgba(242, 242, 242, 0.9));
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+  border-bottom: 1px solid #d5d5d5;
+  -webkit-box-shadow: 0 1px 10px rgba(0, 0, 0, 0.05);
+          box-shadow: 0 1px 10px rgba(0, 0, 0, 0.05);
+  font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  color: #333;
+}
+
+header #logo {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+}
+
+header #logo img {
+  width: 32px;
+  height: 32px;
+  -webkit-animation-name: spin;
+          animation-name: spin;
+  -webkit-animation-duration: 30000ms;
+          animation-duration: 30000ms;
+  -webkit-animation-iteration-count: infinite;
+          animation-iteration-count: infinite;
+  -webkit-animation-timing-function: linear;
+          animation-timing-function: linear;
+}
+
+header .name {
+  color: #050;
+  font-weight: bold;
+}
+
+header a {
+  text-decoration: none;
+  color: #333;
+}
+
+header * {
+  margin: 0 5px;
+}
+
+@-webkit-keyframes spin {
+  from {
+    -webkit-transform: rotate(360deg);
+            transform: rotate(360deg);
+  }
+  to {
+    -webkit-transform: rotate(0deg);
+            transform: rotate(0deg);
+  }
+}
+
+@keyframes spin {
+  from {
+    -webkit-transform: rotate(360deg);
+            transform: rotate(360deg);
+  }
+  to {
+    -webkit-transform: rotate(0deg);
+            transform: rotate(0deg);
+  }
+}
+
+.btn {
+  padding: 4px 8px;
+  font-family: "Ubuntu", Helvetica, Arial, sans-serif;
+  font-weight: bold;
+  border-radius: 10px;
+  border: 1px solid #7a0052;
+  background: #ffe2f5;
+  color: #fd00a9 !important;
+  text-decoration: none;
+}
+
+.btn:hover {
+  background: #ffeff9;
+}
+
+.btn:focus {
+  background: #f3e4ed;
+}
+
+#apiModal {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  position: fixed;
+  z-index: 1;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.4);
+}
+
+.modal-content {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  padding: 5px 10px;
+  border: 1px solid #888;
+  border-radius: 10px;
+  width: 500px;
+  height: 300px;
+  font-family: "Ubuntu", Helvetica, Arial, sans-serif;
+  text-align: center;
+  background-color: #fff;
+}
+
+.modal-content .title {
+  font-size: 32px;
+  font-weight: bold;
+}
+
+.modal-content a {
+  color: blue;
+}
+
+.modal-content p {
+  padding: 10px 50px;
+}
+
+.modal-content input {
+  text-align: center;
+  font-size: 20px;
+  width: 80%;
+  margin: 20px 0;
+  padding: 4px;
+  border-radius: 8px;
+}
+
+.modal-content #sendKey {
+  font-size: 28px;
+}
+
+#close {
+  -ms-flex-item-align: end;
+      align-self: flex-end;
+  position: relative;
+  top: 0;
+  right: 0;
+  color: #aaa;
+  float: right;
+  font-size: 30px;
+  font-weight: bold;
+}
+
+#close:hover, #close:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+#err {
+  display: none;
+  margin-top: 8px;
+  font-family: "Ubuntu", Helvetica, Arial, sans-serif;
+  text-align: center;
+  font-size: 24px;
+  color: #B00;
+}
+
+.subtitle {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 2;
+  margin-left: auto;
+  margin-right: auto;
+  width: 100%;
+  text-align: center;
+  font-family: "Ubuntu", Helvetica, Arial, sans-serif;
+  font-size: 12px;
+  color: gray;
+}
+
+.subtitle a {
+  color: gray;
+}
+/*# sourceMappingURL=styles.css.map */
