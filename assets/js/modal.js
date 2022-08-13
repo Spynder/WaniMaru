@@ -20,6 +20,8 @@ $(document).ready(function() {
 
 	if(!getCookie("apikey")) {
 		apiModal.show();
+	} else {
+		keyInput.val(getCookie("apikey"));
 	}
 
 	sendKey.click(function() {
