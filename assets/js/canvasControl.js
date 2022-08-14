@@ -45,7 +45,7 @@ async function getAllAssignments() {
 	} while(res.pages.next_url);
 
 	for (let stage_num = 1; stage_num < 9; stage_num++) { // Don't sort stages 0 and 9 (Lesson and Burned), as they have no "available_at" property
-		assignments[stage_num].sort((a,b) => a.seconds_until - b.seconds_until);
+		assignments[stage_num].sort((a,b) => b.seconds_until - a.seconds_until);
 	}
 
 	return assignments;
@@ -77,6 +77,7 @@ function drawItem(x, y, rot, size, color) {
 	ctx.beginPath();
 	ctx.moveTo(x - size * Math.cos(rot - Math.PI), y - size * Math.sin(rot - Math.PI));
 	ctx.lineTo(x - size * Math.cos(rot - Math.PI/3), y - size * Math.sin(rot - Math.PI/3));
+	ctx.lineTo(x, y);
 	ctx.lineTo(x - size * Math.cos(rot + Math.PI/3), y - size * Math.sin(rot + Math.PI/3));
 	ctx.lineTo(x - size * Math.cos(rot - Math.PI), y - size * Math.sin(rot - Math.PI));
 	ctx.fillStyle = color;
@@ -88,9 +89,9 @@ function drawItem(x, y, rot, size, color) {
 	ctx.closePath();
 }
 
-function drawText(size, color, text, x, y, align, font) {
+function drawText(size, color, text, x, y, align) {
 	ctx.textBaseline = 'middle';
-	ctx.font = size*SCALE + "px " + font;
+	ctx.font = size*SCALE + "px Helvetica"
 	ctx.fillStyle = color;
 	if(align) {
 		ctx.textAlign = align;
@@ -144,8 +145,8 @@ async function drawItems(redraw) {
 
 	drawnItems = [];
 	drawnItems.push(drawnItem(CENTER, CENTER, 0, assignments[0].map((assignment => assignment.data.subject_id)), undefined, 0)); // Center lessons
-	drawText(48, "#FFFFFF", assignments[0].length, CENTER, CENTER-5*SCALE, "center", "serif");
-	drawText(20, "#FFFFFF", "lessons", CENTER, CENTER+25*SCALE, "center", "serif");
+	drawText(48, "#FFFFFF", assignments[0].length, CENTER, CENTER-5*SCALE, "center");
+	drawText(20, "#FFFFFF", "lessons", CENTER, CENTER+25*SCALE, "center");
 
 	function getItemTransform(indices, item) {
 		let stage_num = item.data.srs_stage;
@@ -215,8 +216,8 @@ $(document).ready(async function() {
 	
 	drawBase();
 	if(!token) {
-		drawText(36, "#FFFFFF", "No", CENTER, CENTER-18*SCALE, "center", "serif");
-		drawText(36, "#FFFFFF", "key!", CENTER, CENTER+18*SCALE, "center", "serif");	
+		drawText(36, "#FFFFFF", "No", CENTER, CENTER-18*SCALE, "center");
+		drawText(36, "#FFFFFF", "key!", CENTER, CENTER+18*SCALE, "center");	
 		return;
 	}
 	fillUser();
