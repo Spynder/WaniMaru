@@ -3,7 +3,7 @@ const SCALE = (window.innerHeight-150)/1000;
 const SIZE = 1000*SCALE;
 const CENTER = SIZE/2;
 const CIRCLE_COLORS = ["#F400A3", "#DF0DA9", "#CA1AAF", "#B527B4", "#A034BA", "#A034BA", "#734DCD", "#4665DF", "#00a0f1", "#4d4d4d"];
-const SUBJECT_COLORS = {"radical": "#008ad1", "kanji": "#eb009c", "vocabulary": "#a300f5"};
+const SUBJECT_COLORS = {"radical": "#008ad1", "kanji": "#eb009c", "vocabulary": "#a300f5", "burned": "#3f3f3f"};
 const CIRCLE_CENTER_SIZE = 60*SCALE;
 const CIRCLE_OFFSET = 45*SCALE;
 const CIRCLE_WIDTH = 12*SCALE;
@@ -36,18 +36,24 @@ async function getAllAssignments() {
 	do {
 		res = await fetchData(res ? res.pages.next_url : "https://api.wanikani.com/v2/assignments", "assignments");
 		res.data.forEach(function(assignment) {
-			if(assignment.data.hasOwnProperty("available_at")) {
-				let at = Date.parse(assignment.data.available_at);
-				assignment.seconds_until = Math.max(0, (at - now)/1000);
+			if(assignment.data.hasOwnProperty("available_at") || assignment.data.hasOwnProperty("burned_at")) {
+				let at;
+				if(assignment.data.available_at) {
+					at = Date.parse(assignment.data.available_at);
+					assignment.seconds_until = Math.max(0, (at - now)/1000);
+				}
+				else {
+					at = Date.parse(assignment.data.burned_at);
+					assignment.seconds_until = Math.floor((now - at)/(1000*60*60*24));
+				}
 			}
 			assignments[assignment.data.srs_stage].push(assignment);
 		})
 	} while(res.pages.next_url);
 
-	for (let stage_num = 1; stage_num < 9; stage_num++) { // Don't sort stages 0 and 9 (Lesson and Burned), as they have no "available_at" property
+	for (let stage_num = 1; stage_num < 10; stage_num++) { // Don't sort stages 0 and 9 (Lesson and Burned), as they have no "available_at" property
 		assignments[stage_num].sort((a,b) => b.seconds_until - a.seconds_until);
 	}
-
 	return assignments;
 }
 
@@ -148,20 +154,28 @@ async function drawItems(redraw) {
 	drawText(48, "#FFFFFF", assignments[0].length, CENTER, CENTER-5*SCALE, "center");
 	drawText(20, "#FFFFFF", "lessons", CENTER, CENTER+25*SCALE, "center");
 
-	function getItemTransform(indices, item) {
+	function getItemTransform(indices, item, burned_angle=0) {
 		let stage_num = item.data.srs_stage;
 		let radius = CIRCLE_CENTER_SIZE+stage_num*CIRCLE_OFFSET;
 		let angle = (item.seconds_until*2*Math.PI)/timers[stage_num].interval - Math.PI/2;
+		if(stage_num==9) {
+			angle = 2*Math.PI*burned_angle - Math.PI/2;
+		}
 
 
 		// Decide color. There's probably a cleaner solution, but this is good enough.
 		// Color gets decided based on subject type quantity.
-		let radicals = indices.filter(i => assignments[stage_num][i].data.subject_type == "radical").length;
-		let kanjis = indices.filter(i => assignments[stage_num][i].data.subject_type == "kanji").length;
-		let vocab = indices.filter(i => assignments[stage_num][i].data.subject_type == "vocabulary").length;
 		let colorName = "radical";
-		if(kanjis >= radicals && kanjis >= vocab) colorName = "kanji";
-		if(vocab >= radicals && vocab >= kanjis) colorName = "vocabulary";
+		if(stage_num!=9) {
+			colorName = "radical";
+			let radicals = indices.filter(i => assignments[stage_num][i].data.subject_type == "radical").length;
+			let kanjis = indices.filter(i => assignments[stage_num][i].data.subject_type == "kanji").length;
+			let vocab = indices.filter(i => assignments[stage_num][i].data.subject_type == "vocabulary").length;
+			if(kanjis >= radicals && kanjis >= vocab) colorName = "kanji";
+			if(vocab >= radicals && vocab >= kanjis) colorName = "vocabulary";
+		} else {
+			colorName = "burned";
+		}
 
 		return {
 			x: CENTER + Math.cos(angle)*radius,
@@ -171,12 +185,14 @@ async function drawItems(redraw) {
 			colorName: colorName
 		};
 	}
-
-	for (let stage_num = 1; stage_num < 9; stage_num++) {
+	
+	let unique_burns_count = new Set(assignments[9].map(assignment => assignment.seconds_until)).size;
+	for (let stage_num = 1; stage_num < 10; stage_num++) {
 		if(!assignments[stage_num].length) continue;
 		let indices = [];
 		let subjects = [];
 		let seconds_last = -1;
+		let marker_index = 0
 		for(let index in assignments[stage_num]) {
 			index = Number(index); // Why tf is it string not num? Whatever
 			let currItem = assignments[stage_num][index];
@@ -187,8 +203,8 @@ async function drawItems(redraw) {
 			}
 			if(  index+1 == assignments[stage_num].length || // Last element
 				(index+1 < assignments[stage_num].length && assignments[stage_num][index+1].seconds_until != currItem.seconds_until)) { // New element is of different timing
-				let transform = getItemTransform(indices, currItem);
-				
+				let transform = getItemTransform(indices, currItem, marker_index/unique_burns_count);
+				marker_index++;
 				drawItem(transform.x, transform.y, transform.rot, transform.size, SUBJECT_COLORS[transform.colorName])
 				drawnItems.push(drawnItem(transform.x, transform.y, stage_num, subjects, transform.colorName, seconds_last));
 
@@ -262,6 +278,9 @@ $(document).ready(async function() {
 				let timeString = hours_until < 24 ? `${hours_until} hours` : `${Math.ceil(hours_until/24)} days`;
 				let timer = `Incoming in <span class="highlight">${timeString}</span>`;
 				if(!hours_until) timer = `<span class="highlight">Already waiting for you!</span>`;
+				if(boundTo.srs==9) {
+					timer = `Burned ${Math.floor(boundTo.seconds_until)} days ago`;
+				}
 
 				return $(`
 					<div class="header">
