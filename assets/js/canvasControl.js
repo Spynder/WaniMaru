@@ -259,7 +259,7 @@ $(document).ready(async function() {
 	}
 
 	async function checkItemClicks(event) {
-		if(event.path.findIndex(el => el.id == "info" || el.id == "apiModal") !== -1) return; // If clicked on info or modal is on don't propagate
+		if(event.composedPath().findIndex(el => el.id == "info" || el.id == "apiModal") !== -1) return; // If clicked on info or modal is on don't propagate
 		let pos = getMousePos(event);
 		let clickedItem;
 		for (let i in drawnItems) {
